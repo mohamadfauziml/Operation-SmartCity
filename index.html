@@ -49,6 +49,18 @@
     textarea { width:100%; min-height:180px; resize:vertical; background:#0b1329; color:var(--ink); border:1px solid rgba(34,211,238,.45); border-radius:.75rem; padding:1rem; line-height:1.6; }
     .counter { color:var(--muted); font-size:.82rem; text-align:right; margin-top:.35rem; }
     .status-message { min-height:1.5rem; color:#82f5cd; font-weight:600; }
+    .student-panel { background:linear-gradient(145deg,rgba(23,37,84,.96),rgba(15,23,42,.98)); border:1px solid rgba(34,211,238,.55); border-radius:1.15rem; padding:1.5rem; box-shadow:0 18px 45px rgba(0,0,0,.22); }
+    .student-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    .field-label { display:block; margin-bottom:.45rem; font-weight:800; color:#e2e8f0; }
+    .student-input { width:100%; min-height:48px; border:1px solid rgba(34,211,238,.45); border-radius:.65rem; background:#0b1329; color:var(--ink); padding:.75rem .9rem; }
+    .profile-summary { display:none; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+    .profile-summary.is-visible { display:flex; }
+    .profile-form.is-hidden { display:none; }
+    .profile-value { color:#82f5cd; font-weight:800; }
+    .locked-link { opacity:.55; cursor:not-allowed; filter:grayscale(.35); }
+    .submit-spinner { width:18px; height:18px; border:2px solid rgba(8,47,73,.3); border-top-color:#082f49; border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media(max-width:768px){.student-grid{grid-template-columns:1fr}}
     .complete-item { color:var(--muted); } .complete-item.is-done { color:#82f5cd; } .complete-item.is-done i { color:var(--mint); }
     @media(max-width:768px){ html{scroll-behavior:auto}.desktop-links{display:none}.mobile-toggle{display:inline-flex}.mobile-nav.is-open{display:block}.section{padding:4rem 0}.content-width{width:min(100% - 1.5rem,1180px)}.network-art{min-height:340px}.n1{left:5%}.n2{left:5%}.n4{right:5%}.n5{right:5%}.sequence-wrap{flex-direction:column;gap:1.4rem}.sequence-step{width:100%;border-left:2px solid rgba(34,211,238,.35);border-top:0;padding:0 0 0 1rem;text-align:left}.sequence-step::before{left:-6px;top:0;transform:none}}
     @media(min-width:769px){.mobile-toggle,.mobile-nav{display:none}}
@@ -70,6 +82,36 @@
     </div>
    </header>
    <main>
+    <section id="student-access" class="section pt-10 pb-0">
+     <div class="content-width">
+      <div class="student-panel">
+       <div id="studentFormWrap" class="profile-form">
+        <p class="eyebrow">STUDENT ACCESS</p>
+        <h2 class="font-extrabold mt-2 text-2xl">Enter Your Details Before Starting</h2>
+        <p class="text-slate-300 mt-3 leading-7">Your details are stored on this device and shared with each mission. They will only be sent to Google Sheets when you submit a reflection.</p>
+        <form id="studentForm" class="mt-6" novalidate>
+         <div class="student-grid">
+          <div><label class="field-label" for="studentName">Student Name</label><input id="studentName" class="student-input" type="text" autocomplete="name" maxlength="100" placeholder="Enter full name" required></div>
+          <div><label class="field-label" for="studentId">Student ID</label><input id="studentId" class="student-input" type="text" autocomplete="off" maxlength="40" placeholder="Enter student ID" required></div>
+          <div><label class="field-label" for="studentClass">Class</label><input id="studentClass" class="student-input" type="text" autocomplete="off" maxlength="50" placeholder="Example: DFI 1A" required></div>
+         </div>
+         <div class="flex flex-wrap items-center gap-3 mt-5">
+          <button id="saveStudent" type="submit" class="primary-action">Save &amp; Start Missions</button>
+          <p id="studentStatus" class="status-message" role="status" aria-live="polite"></p>
+         </div>
+        </form>
+       </div>
+       <div id="studentSummary" class="profile-summary">
+        <div>
+         <p class="eyebrow">ACTIVE STUDENT</p>
+         <p class="mt-2"><span id="summaryName" class="profile-value"></span> · <span id="summaryId"></span> · <span id="summaryClass"></span></p>
+         <p class="text-slate-400 text-sm mt-2">This profile is saved locally on this device.</p>
+        </div>
+        <button id="editStudent" type="button" class="secondary-action">Edit Student Details</button>
+       </div>
+      </div>
+     </div>
+    </section>
     <section id="mission-brief" class="section pt-16">
      <div class="content-width grid lg:grid-cols-2 gap-12 items-center">
       <div>
@@ -193,7 +235,7 @@
       </div>
       <aside data-template-id="checklist-panel" class="canva-panel guide-card p-6 self-start" style="background: rgb(23, 37, 84);">
        <h3 data-template-id="checklist-title" class="canva-text font-bold" style="color: rgb(248, 250, 252); font-weight: 700; font-style: normal; font-size: 19px;">Personal Mission Checklist</h3>
-       <p data-template-id="checklist-note" class="canva-text text-slate-300 leading-7 mt-3" style="color: rgb(203, 213, 225); font-weight: 400; font-style: normal; font-size: 16px;">Mission progress is not automatically tracked. Students should record completed missions using the personal checklist below.</p>
+       <p data-template-id="checklist-note" class="canva-text text-slate-300 leading-7 mt-3" style="color: rgb(203, 213, 225); font-weight: 400; font-style: normal; font-size: 16px;">Mission progress is loaded automatically after each reflection is submitted. You may also use the checklist locally while completing the activities.</p>
        <div class="mt-5"><label class="check-row"><input class="mission-check" type="checkbox" data-index="0"><span data-template-id="check-one" class="canva-text" style="color: rgb(248, 250, 252); font-weight: 400; font-style: normal; font-size: 16px;">Mission 1 completed</span></label> <label class="check-row"><input class="mission-check" type="checkbox" data-index="1"><span data-template-id="check-two" class="canva-text" style="color: rgb(248, 250, 252); font-weight: 400; font-style: normal; font-size: 16px;">Mission 2 completed</span></label> <label class="check-row"><input class="mission-check" type="checkbox" data-index="2"><span data-template-id="check-three" class="canva-text" style="color: rgb(248, 250, 252); font-weight: 400; font-style: normal; font-size: 16px;">Mission 3 completed</span></label> <label class="check-row"><input class="mission-check" type="checkbox" data-index="3"><span data-template-id="check-four" class="canva-text" style="color: rgb(248, 250, 252); font-weight: 400; font-style: normal; font-size: 16px;">Mission 4 completed</span></label>
        </div><button id="resetChecklist" data-template-id="reset-checklist" type="button" class="canva-button small-action mt-5" style="background: transparent; color: rgb(248, 250, 252); font-weight: 700; font-style: normal; font-size: 16px;">Reset My Checklist</button>
       </aside>
@@ -218,7 +260,7 @@
         </div>
         <div class="flex flex-wrap gap-2 mt-5">
          <span data-template-id="mission-one-duration" class="canva-tag badge badge-cyan" style="background: rgba(34, 211, 238, 0.13); color: rgb(165, 243, 252); font-weight: 700; font-style: normal; font-size: 16px;">20–25 minutes</span><span data-template-id="mission-one-difficulty" class="canva-tag badge badge-amber" style="background: rgba(245, 158, 11, 0.13); color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Foundation</span>
-        </div><a data-template-id="mission-one-button" class="canva-button mission-link mt-6" href="https://mohamadfauziml.github.io/Component-Detective/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 1: Component Detective in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Component Detective</a>
+        </div><a data-template-id="mission-one-button" class="canva-button mission-link mt-6 protected-mission" href="https://mohamadfauziml.github.io/Component-Detective/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 1: Component Detective in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Component Detective</a>
         <p data-template-id="mission-external-note" class="canva-text text-slate-400 text-sm mt-3" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Opens the published mission in a new tab.</p>
        </article>
        <article data-template-id="mission-two-card" class="canva-card mission-card p-6 flex flex-col" style="background: rgb(23, 37, 84);">
@@ -232,7 +274,7 @@
         </div>
         <div class="flex flex-wrap gap-2 mt-5">
          <span data-template-id="mission-two-duration" class="canva-tag badge badge-cyan" style="background: rgba(34, 211, 238, 0.13); color: rgb(165, 243, 252); font-weight: 700; font-style: normal; font-size: 16px;">25–30 minutes</span><span data-template-id="mission-two-difficulty" class="canva-tag badge badge-amber" style="background: rgba(245, 158, 11, 0.13); color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Developing</span>
-        </div><a data-template-id="mission-two-button" class="canva-button mission-link mt-6" href="https://mohamadfauziml.github.io/Data-Flow-Commander/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 2: Data Flow Commander in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Data Flow Commander</a>
+        </div><a data-template-id="mission-two-button" class="canva-button mission-link mt-6 protected-mission" href="https://mohamadfauziml.github.io/Data-Flow-Commander/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 2: Data Flow Commander in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Data Flow Commander</a>
         <p data-template-id="mission-two-external-note" class="canva-text text-slate-400 text-sm mt-3" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Opens the published mission in a new tab.</p>
        </article>
        <article data-template-id="mission-three-card" class="canva-card mission-card p-6 flex flex-col" style="background: rgb(23, 37, 84);">
@@ -246,7 +288,7 @@
         </div>
         <div class="flex flex-wrap gap-2 mt-5">
          <span data-template-id="mission-three-duration" class="canva-tag badge badge-cyan" style="background: rgba(34, 211, 238, 0.13); color: rgb(165, 243, 252); font-weight: 700; font-style: normal; font-size: 16px;">30–35 minutes</span><span data-template-id="mission-three-difficulty" class="canva-tag badge badge-amber" style="background: rgba(245, 158, 11, 0.13); color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Advanced</span>
-        </div><a data-template-id="mission-three-button" class="canva-button mission-link mt-6" href="https://mohamadfauziml.github.io/System-Investigator/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 3: IoT System Investigator in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open System Investigator</a>
+        </div><a data-template-id="mission-three-button" class="canva-button mission-link mt-6 protected-mission" href="https://mohamadfauziml.github.io/System-Investigator/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 3: IoT System Investigator in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open System Investigator</a>
         <p data-template-id="mission-three-external-note" class="canva-text text-slate-400 text-sm mt-3" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Opens the published mission in a new tab.</p>
        </article>
        <article data-template-id="mission-four-card" class="canva-card mission-card p-6 flex flex-col" style="background: rgb(23, 37, 84);">
@@ -260,7 +302,7 @@
         </div>
         <div class="flex flex-wrap gap-2 mt-5">
          <span data-template-id="mission-four-duration" class="canva-tag badge badge-cyan" style="background: rgba(34, 211, 238, 0.13); color: rgb(165, 243, 252); font-weight: 700; font-style: normal; font-size: 16px;">35–40 minutes</span><span data-template-id="mission-four-difficulty" class="canva-tag badge badge-amber" style="background: rgba(245, 158, 11, 0.13); color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Capstone</span>
-        </div><a data-template-id="mission-four-button" class="canva-button mission-link mt-6" href="https://mohamadfauziml.github.io/Smart-Solution/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 4: Smart Solution Architect in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Smart Solution Architect</a>
+        </div><a data-template-id="mission-four-button" class="canva-button mission-link mt-6 protected-mission" href="https://mohamadfauziml.github.io/Smart-Solution/" target="_blank" rel="noopener noreferrer" aria-label="Open Mission 4: Smart Solution Architect in a new tab" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Open Smart Solution Architect</a>
         <p data-template-id="mission-four-external-note" class="canva-text text-slate-400 text-sm mt-3" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Opens the published mission in a new tab.</p>
        </article>
       </div>
@@ -287,7 +329,7 @@
         </div>
        </div>
        <div class="flex flex-wrap items-center gap-3 mt-7">
-        <button id="copyReflection" data-template-id="copy-reflection" type="button" class="canva-button primary-action" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Copy Reflection</button><button id="clearReflection" data-template-id="clear-reflection" type="button" class="canva-button secondary-action" style="background: transparent; color: rgb(248, 250, 252); font-weight: 700; font-style: normal; font-size: 16px;">Clear Reflection</button><button id="confirmClear" data-template-id="confirm-clear" type="button" class="canva-button small-action hidden" style="background: transparent; color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Confirm Clear</button>
+        <button id="submitReflection" data-template-id="submit-reflection" type="button" class="canva-button primary-action" style="background: rgb(34, 211, 238); color: rgb(8, 47, 73); font-weight: 800; font-style: normal; font-size: 16px;">Submit Final Reflection</button><button id="copyReflection" data-template-id="copy-reflection" type="button" class="canva-button secondary-action" style="background: transparent; color: rgb(248, 250, 252); font-weight: 700; font-style: normal; font-size: 16px;">Copy Reflection</button><button id="clearReflection" data-template-id="clear-reflection" type="button" class="canva-button secondary-action" style="background: transparent; color: rgb(248, 250, 252); font-weight: 700; font-style: normal; font-size: 16px;">Clear Reflection</button><button id="confirmClear" data-template-id="confirm-clear" type="button" class="canva-button small-action hidden" style="background: transparent; color: rgb(252, 213, 141); font-weight: 700; font-style: normal; font-size: 16px;">Confirm Clear</button>
         <p id="reflectionStatus" class="status-message" role="status" aria-live="polite"></p>
        </div>
       </div>
@@ -306,7 +348,7 @@
         <li data-template-id="lecturer-three" class="canva-text" style="color: rgb(226, 232, 240); font-weight: 400; font-style: normal; font-size: 16px;">Mission 3: Practise system analysis</li>
         <li data-template-id="lecturer-four" class="canva-text" style="color: rgb(226, 232, 240); font-weight: 400; font-style: normal; font-size: 16px;">Mission 4: Demonstrate solution design</li>
        </ul>
-       <p data-template-id="lecturer-note" class="canva-text text-slate-400 leading-7 mt-6" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Student scores and responses remain inside each individual game and are not transferred to this portal.</p>
+       <p data-template-id="lecturer-note" class="canva-text text-slate-400 leading-7 mt-6" style="color: rgb(148, 163, 184); font-weight: 400; font-style: normal; font-size: 16px;">Student identity is retained locally across the portal and missions. A mission result is sent to Google Sheets only when the student submits the mission reflection.</p>
       </aside>
       <aside data-template-id="completion-panel" class="canva-panel completion-panel p-7" style="background: rgb(23, 37, 84);">
        <p data-template-id="completion-eyebrow" class="canva-text eyebrow" style="color: rgb(34, 211, 238); font-weight: 800; font-style: normal; font-size: 16px;">MISSION DEBRIEF</p>
@@ -342,41 +384,252 @@
   <script src="/_sdk/b23f1f6ec78e9bd4.editing_sdk.js" integrity="sha512-WFdQutvUZzxrmcHkL8cbfuFDTeF8Cn8Bt3yqX/a/OdiqPz/t9UcjsIsZK7D+tMTmC2JTwhwRJNyfcHmIWhG8Wg=="></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUHRA6dH9Y4zCPPLdU_3VrQS06ix7qyAhMtdtdfa1Ow8ymwvrEPpOi6qZsRdCTKmK4/exec";
+      const GAME_ID = "OSC101";
+      const STUDENT_KEY = "ogfStudent";
+      const CHECKLIST_KEY = GAME_ID + "_missionChecklist";
+      const FINAL_REFLECTION_KEY = GAME_ID + "_finalReflectionDraft";
+
       lucide.createIcons();
-      const menuButton = document.getElementById("menuButton"), mobileNav = document.getElementById("mobileNav");
-      menuButton.addEventListener("click", () => { const open = mobileNav.classList.toggle("hidden"); menuButton.setAttribute("aria-expanded", String(!open)); });
-      document.querySelectorAll("#mobileNav a").forEach(link => link.addEventListener("click", () => { mobileNav.classList.add("hidden"); menuButton.setAttribute("aria-expanded","false"); }));
+
+      const menuButton = document.getElementById("menuButton");
+      const mobileNav = document.getElementById("mobileNav");
+      menuButton.addEventListener("click", () => {
+        const hidden = mobileNav.classList.toggle("hidden");
+        menuButton.setAttribute("aria-expanded", String(!hidden));
+      });
+      document.querySelectorAll("#mobileNav a").forEach(link => link.addEventListener("click", () => {
+        mobileNav.classList.add("hidden");
+        menuButton.setAttribute("aria-expanded", "false");
+      }));
+
+      const studentFormWrap = document.getElementById("studentFormWrap");
+      const studentSummary = document.getElementById("studentSummary");
+      const studentForm = document.getElementById("studentForm");
+      const studentName = document.getElementById("studentName");
+      const studentId = document.getElementById("studentId");
+      const studentClass = document.getElementById("studentClass");
+      const studentStatus = document.getElementById("studentStatus");
+      const protectedLinks = [...document.querySelectorAll(".protected-mission")];
+
+      function getStudent() {
+        try {
+          const value = JSON.parse(localStorage.getItem(STUDENT_KEY) || "null");
+          if (!value || !value.studentName || !value.studentId || !value.studentClass) return null;
+          return value;
+        } catch { return null; }
+      }
+
+      function saveStudentLocally(profile) {
+        localStorage.setItem(STUDENT_KEY, JSON.stringify(profile));
+        // Compatibility keys for all OSC101 mission pages.
+        localStorage.setItem("ogfStudentName", profile.studentName);
+        localStorage.setItem("ogfStudentId", profile.studentId);
+        localStorage.setItem("ogfStudentClass", profile.studentClass);
+        localStorage.setItem(GAME_ID + "_student", JSON.stringify(profile));
+      }
+
+      function renderStudent(profile) {
+        const ready = Boolean(profile);
+        studentFormWrap.classList.toggle("is-hidden", ready);
+        studentSummary.classList.toggle("is-visible", ready);
+        protectedLinks.forEach(link => {
+          link.classList.toggle("locked-link", !ready);
+          link.setAttribute("aria-disabled", String(!ready));
+        });
+        if (ready) {
+          document.getElementById("summaryName").textContent = profile.studentName;
+          document.getElementById("summaryId").textContent = profile.studentId;
+          document.getElementById("summaryClass").textContent = profile.studentClass;
+          studentName.value = profile.studentName;
+          studentId.value = profile.studentId;
+          studentClass.value = profile.studentClass;
+        }
+      }
+
+      protectedLinks.forEach(link => link.addEventListener("click", event => {
+        if (getStudent()) return;
+        event.preventDefault();
+        studentStatus.textContent = "Enter and save your student details before opening a mission.";
+        document.getElementById("student-access").scrollIntoView({ behavior: "smooth" });
+        studentName.focus();
+      }));
+
+      studentForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const profile = {
+          studentName: studentName.value.trim(),
+          studentId: studentId.value.trim().toUpperCase(),
+          studentClass: studentClass.value.trim(),
+          gameId: GAME_ID,
+          savedAt: new Date().toISOString()
+        };
+        if (!profile.studentName || !profile.studentId || !profile.studentClass) {
+          studentStatus.textContent = "Please complete Student Name, Student ID and Class.";
+          return;
+        }
+        saveStudentLocally(profile);
+        studentStatus.textContent = "Student details saved on this device.";
+        renderStudent(profile);
+        loadProgress(profile.studentId);
+        document.getElementById("missions").scrollIntoView({ behavior: "smooth" });
+      });
+
+      document.getElementById("editStudent").addEventListener("click", () => {
+        studentSummary.classList.remove("is-visible");
+        studentFormWrap.classList.remove("is-hidden");
+        studentStatus.textContent = "Update the details and save again.";
+        studentName.focus();
+      });
 
       const checks = [...document.querySelectorAll(".mission-check")];
       const listItems = [...document.querySelectorAll("#completionList .complete-item")];
       const allMessage = document.getElementById("allCompleteMessage");
-      function updateChecklist() {
+
+      function saveChecklist() {
+        localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checks.map(c => c.checked)));
+      }
+
+      function updateChecklist(shouldSave = true) {
         const done = checks.filter(c => c.checked).length;
         listItems.forEach((item, index) => {
           const selected = checks[index].checked;
           item.classList.toggle("is-done", selected);
           const icon = item.querySelector("svg");
-          if (icon) { icon.setAttribute("data-lucide", selected ? "check-circle-2" : "circle"); }
+          if (icon) icon.setAttribute("data-lucide", selected ? "check-circle-2" : "circle");
         });
         allMessage.classList.toggle("hidden", done !== 4);
+        if (shouldSave) saveChecklist();
         lucide.createIcons();
       }
-      checks.forEach(c => c.addEventListener("change", updateChecklist));
-      document.getElementById("resetChecklist").addEventListener("click", () => { checks.forEach(c => c.checked = false); updateChecklist(); });
 
-      const one = document.getElementById("reflectionOne"), two = document.getElementById("reflectionTwo");
-      const countOne = document.getElementById("countOne"), countTwo = document.getElementById("countTwo"), status = document.getElementById("reflectionStatus");
+      function loadLocalChecklist() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(CHECKLIST_KEY) || "[]");
+          checks.forEach((c, i) => c.checked = Boolean(saved[i]));
+        } catch { /* Keep defaults */ }
+        updateChecklist(false);
+      }
+
+      async function loadProgress(id) {
+        if (!id) return;
+        try {
+          const response = await fetch(WEB_APP_URL + "?action=progress&studentId=" + encodeURIComponent(id));
+          const data = await response.json();
+          if (!data.success || !data.missions) return;
+          ["M1", "M2", "M3", "M4"].forEach((missionId, index) => {
+            checks[index].checked = data.missions[missionId]?.completed === true;
+          });
+          updateChecklist(true);
+        } catch (error) {
+          console.warn("Progress could not be loaded; local checklist retained.", error);
+        }
+      }
+
+      checks.forEach(c => c.addEventListener("change", () => updateChecklist(true)));
+      document.getElementById("resetChecklist").addEventListener("click", () => {
+        checks.forEach(c => c.checked = false);
+        updateChecklist(true);
+      });
+
+      const one = document.getElementById("reflectionOne");
+      const two = document.getElementById("reflectionTwo");
+      const countOne = document.getElementById("countOne");
+      const countTwo = document.getElementById("countTwo");
+      const status = document.getElementById("reflectionStatus");
+      const submitButton = document.getElementById("submitReflection");
+
       function count(input, output) { output.textContent = input.value.length + " characters"; }
-      one.addEventListener("input", () => count(one,countOne)); two.addEventListener("input", () => count(two,countTwo));
+      function saveReflectionDraft() {
+        localStorage.setItem(FINAL_REFLECTION_KEY, JSON.stringify({ one: one.value, two: two.value }));
+      }
+      function loadReflectionDraft() {
+        try {
+          const draft = JSON.parse(localStorage.getItem(FINAL_REFLECTION_KEY) || "null");
+          if (draft) { one.value = draft.one || ""; two.value = draft.two || ""; }
+        } catch { /* Keep empty */ }
+        count(one, countOne); count(two, countTwo);
+      }
+
+      one.addEventListener("input", () => { count(one, countOne); saveReflectionDraft(); });
+      two.addEventListener("input", () => { count(two, countTwo); saveReflectionDraft(); });
+
       document.getElementById("copyReflection").addEventListener("click", async () => {
         const content = "Complete System Explanation\n\n" + one.value + "\n\nEngineering Improvement Proposal\n\n" + two.value;
         try { await navigator.clipboard.writeText(content); status.textContent = "Reflection copied successfully."; }
-        catch { status.textContent = "Copy is unavailable in this browser. Please select and copy your reflection manually."; }
+        catch { status.textContent = "Copy is unavailable. Please select and copy the reflection manually."; }
       });
-      const clear = document.getElementById("clearReflection"), confirmClear = document.getElementById("confirmClear");
-      clear.addEventListener("click", () => { confirmClear.classList.remove("hidden"); status.textContent = "Confirm before clearing both reflection responses."; });
-      confirmClear.addEventListener("click", () => { one.value = ""; two.value = ""; count(one,countOne); count(two,countTwo); confirmClear.classList.add("hidden"); status.textContent = "Reflection cleared."; });
-      updateChecklist();
+
+      const clear = document.getElementById("clearReflection");
+      const confirmClear = document.getElementById("confirmClear");
+      clear.addEventListener("click", () => {
+        confirmClear.classList.remove("hidden");
+        status.textContent = "Confirm before clearing both reflection responses.";
+      });
+      confirmClear.addEventListener("click", () => {
+        one.value = ""; two.value = "";
+        count(one, countOne); count(two, countTwo);
+        localStorage.removeItem(FINAL_REFLECTION_KEY);
+        confirmClear.classList.add("hidden");
+        status.textContent = "Reflection cleared.";
+      });
+
+      submitButton.addEventListener("click", async () => {
+        const profile = getStudent();
+        if (!profile) {
+          status.textContent = "Save your student details before submitting.";
+          document.getElementById("student-access").scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+        const answerOne = one.value.trim();
+        const answerTwo = two.value.trim();
+        if (!answerOne || !answerTwo) {
+          status.textContent = "Please complete both final reflection responses before submitting.";
+          return;
+        }
+
+        const reflection = "Complete System Explanation:\n" + answerOne + "\n\nEngineering Improvement Proposal:\n" + answerTwo;
+        const payload = {
+          action: "submitReflection",
+          gameId: GAME_ID,
+          missionId: "FINAL",
+          studentId: profile.studentId,
+          studentName: profile.studentName,
+          studentClass: profile.studentClass,
+          reflection,
+          status: "Completed",
+          clientTimestamp: new Date().toISOString()
+        };
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="submit-spinner" aria-hidden="true"></span> Submitting...';
+        status.textContent = "Sending your final reflection...";
+
+        try {
+          const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error || "Submission failed.");
+          localStorage.setItem(GAME_ID + "_FINAL_completed", "true");
+          localStorage.removeItem(FINAL_REFLECTION_KEY);
+          status.textContent = "Final reflection submitted successfully. Attempt " + result.attemptNo + ".";
+          submitButton.textContent = "Reflection Submitted";
+        } catch (error) {
+          console.error(error);
+          status.textContent = "Submission failed. Your reflection remains saved on this device. Please try again.";
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit Final Reflection";
+        }
+      });
+
+      loadLocalChecklist();
+      loadReflectionDraft();
+      const savedStudent = getStudent();
+      renderStudent(savedStudent);
+      if (savedStudent) loadProgress(savedStudent.studentId);
     });
   </script>
  
